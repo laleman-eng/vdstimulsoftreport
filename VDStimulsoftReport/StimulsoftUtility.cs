@@ -15,7 +15,7 @@ namespace VDStimulsoftReport
 {
     public class StimulsoftUtility 
     {
-        public string openReportStimulsoft(XmlDocument xml)
+        public string getStimulsoftReportBase64(string path, XmlDocument xml)
         {
             
             var report = StiReport.CreateNewReport();
@@ -23,13 +23,21 @@ namespace VDStimulsoftReport
             try
             {
                // report.Load("C:\\ReportTest.mrt");
-                report.Load("C:\\33_VisualK_CL.mrt");
+                report.Load(path);
                 report.Dictionary.Databases.Clear();
                 var ds = ConvertXMLToDataSet(xml.InnerXml);
 
                 report.RegData(ds);
                 report.Render();
-                report.ExportDocument(StiExportFormat.Pdf, "38Report.pdf");
+                //report.ExportDocument(StiExportFormat.Pdf, "39Report.pdf");
+
+                MemoryStream oStream = new MemoryStream();
+                report.ExportDocument(StiExportFormat.Pdf, oStream);
+                byte[] b1 = new byte[oStream.Length];
+                oStream.Seek(0, System.IO.SeekOrigin.Begin);
+                oStream.Read(b1, 0, Convert.ToInt32(oStream.Length));
+                return Convert.ToBase64String(b1);
+     
             }
             catch (Exception ex)
             {
