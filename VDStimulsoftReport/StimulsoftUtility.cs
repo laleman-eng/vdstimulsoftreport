@@ -9,6 +9,8 @@ using System.IO;
 using System.Windows;
 using System.Data;
 using System.Xml;
+using IDAutomation.Windows.Forms.PDF417Barcode;
+using System.Drawing;
 
 
 namespace VDStimulsoftReport
@@ -22,20 +24,56 @@ namespace VDStimulsoftReport
 
             try
             {
-               // report.Load("C:\\ReportTest.mrt");
-                report.Load(path);
-                report.Dictionary.Databases.Clear();
-                var ds = ConvertXMLToDataSet(xml.InnerXml);
 
-                report.RegData(ds);
+                string codigoBarra = "asdddddddddddddddddddddddddddddddddddddddddddasdastrf345435345345435";
+
+                using (var pdf417Bar = new IDAutomation.Windows.Forms.PDF417Barcode.PDF417Barcode())
+                {
+                    pdf417Bar.DataToEncode = codigoBarra;
+                    pdf417Bar.PDFMode = IDAutomation.Windows.Forms.PDF417Barcode.PDF417Barcode.PDF417Modes.Binary;
+                    pdf417Bar.PDFColumns = 12;
+                    pdf417Bar.Resolution = IDAutomation.Windows.Forms.PDF417Barcode.PDF417Barcode.Resolutions.Custom;
+                    pdf417Bar.ResolutionCustomDPI = 120;
+                    pdf417Bar.Height = 160;
+                    pdf417Bar.Width = 190;
+                    pdf417Bar.XtoYRatio = 4;
+                    pdf417Bar.PDFErrorCorrectionLevel = 1;
+                    pdf417Bar.RefreshImage();
+                    MemoryStream myMemoryStream = new MemoryStream();
+                    pdf417Bar.Picture.Save(myMemoryStream, System.Drawing.Imaging.ImageFormat.Png);
+
+                    report.Load(path);
+                    report.Dictionary.Databases.Clear();
+                    var ds = ConvertXMLToDataSet(xml.InnerXml);
+                    report.RegData(ds);
+
+                    Image imagenTimbre = System.Drawing.Image.FromStream(myMemoryStream);
+                    try
+                    {
+                        report.Dictionary.Variables["codigoBarra"].ValueObject = imagenTimbre;
+                    }
+                    catch { }
+
+                }
+                
+                
+                
+                // report.Load("C:\\ReportTest.mrt");
+               
+
+   
+                report.Dictionary.Variables["Variabletest"].ValueObject = "Envio Desde c#";
                 report.Render();
-                //report.ExportDocument(StiExportFormat.Pdf, "39Report.pdf");
+                report.ExportDocument(StiExportFormat.Pdf, "40Report.pdf");
 
                 MemoryStream oStream = new MemoryStream();
                 report.ExportDocument(StiExportFormat.Pdf, oStream);
                 byte[] b1 = new byte[oStream.Length];
                 oStream.Seek(0, System.IO.SeekOrigin.Begin);
                 oStream.Read(b1, 0, Convert.ToInt32(oStream.Length));
+
+
+
                 return Convert.ToBase64String(b1);
      
             }
@@ -47,6 +85,9 @@ namespace VDStimulsoftReport
             return "";
 
         }
+
+
+
 
         public DataSet ConvertXMLToDataSet(string xmlData)
         {
