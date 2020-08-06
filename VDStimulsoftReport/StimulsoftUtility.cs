@@ -17,15 +17,12 @@ namespace VDStimulsoftReport
 {
     public class StimulsoftUtility 
     {
-        public string getStimulsoftReportBase64(string path, XmlDocument xml)
+        public string getStimulsoftReportBase64(string path, XmlDocument xml, XmlDocument xmlTed)
         {
-            
             var report = StiReport.CreateNewReport();
-
             try
             {
-
-                string codigoBarra = "asdddddddddddddddddddddddddddddddddddddddddddasdastrf345435345345435";
+                string codigoBarra = xmlTed.InnerText;
 
                 using (var pdf417Bar = new IDAutomation.Windows.Forms.PDF417Barcode.PDF417Barcode())
                 {
@@ -55,16 +52,10 @@ namespace VDStimulsoftReport
                     catch { }
 
                 }
-                
-                
-                
-                // report.Load("C:\\ReportTest.mrt");
-               
 
-   
                 report.Dictionary.Variables["Variabletest"].ValueObject = "Envio Desde c#";
                 report.Render();
-                report.ExportDocument(StiExportFormat.Pdf, "40Report.pdf");
+                report.ExportDocument(StiExportFormat.Pdf, "41Report.pdf");
 
                 MemoryStream oStream = new MemoryStream();
                 report.ExportDocument(StiExportFormat.Pdf, oStream);
