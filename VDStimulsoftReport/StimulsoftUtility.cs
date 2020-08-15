@@ -8,7 +8,6 @@ using Stimulsoft.Report;
 using System.IO;
 using System.Windows;
 using System.Data;
-using System.Xml;
 using IDAutomation.Windows.Forms.PDF417Barcode;
 using System.Drawing;
 
@@ -19,7 +18,8 @@ namespace VDStimulsoftReport
     {
         public string getStimulsoftReportBase64(string path, XmlDocument xml, XmlDocument xmlTed)
         {
-            var report = StiReport.CreateNewReport();
+            StiReport report = StiReport.CreateNewReport();
+                
             try
             {
                 string codigoBarra = xmlTed.InnerText;
@@ -49,13 +49,17 @@ namespace VDStimulsoftReport
                     {
                         report.Dictionary.Variables["codigoBarra"].ValueObject = imagenTimbre;
                     }
-                    catch { }
+                    catch (Exception e )
+                    {
+                        Console.WriteLine("Excepcion " + e.Message);
+                        return "";    
+                    }
 
                 }
 
                 report.Dictionary.Variables["Variabletest"].ValueObject = "Envio Desde c#";
                 report.Render();
-                report.ExportDocument(StiExportFormat.Pdf, "41Report.pdf");
+                report.ExportDocument(StiExportFormat.Pdf, "42Report.pdf");
 
                 MemoryStream oStream = new MemoryStream();
                 report.ExportDocument(StiExportFormat.Pdf, oStream);
