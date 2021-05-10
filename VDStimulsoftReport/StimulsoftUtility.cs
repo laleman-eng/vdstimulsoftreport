@@ -57,9 +57,9 @@ namespace VDStimulsoftReport
 
                 }
 
-                report.Dictionary.Variables["Variabletest"].ValueObject = "Envio Desde c#";
+                //report.Dictionary.Variables["Variabletest"].ValueObject = "Envio Desde c#";
                 report.Render();
-                report.ExportDocument(StiExportFormat.Pdf, "42Report.pdf");
+                //report.ExportDocument(StiExportFormat.Pdf, "42Report.pdf");
 
                 MemoryStream oStream = new MemoryStream();
                 report.ExportDocument(StiExportFormat.Pdf, oStream);
